@@ -1,5 +1,5 @@
- import React, { Component } from "react";
-import { Table } from "reactstrap";
+import React, { Component } from "react";
+import { Table, Button } from "reactstrap";
 
 export default class CartList extends Component {
   renderCart() {
@@ -24,6 +24,14 @@ export default class CartList extends Component {
               <td>{cartItem.product.unitPrice}</td>
               <td>{cartItem.product.unitsInStock}</td>
               <td>{cartItem.quantity}</td>
+              <td>
+                <Button
+                  color="danger"
+                  onClick={() => this.props.removeFromCart(cartItem.product)}
+                >
+                  Remove
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -32,8 +40,6 @@ export default class CartList extends Component {
   }
 
   render() {
-    return <div>
-        {this.renderCart()}
-    </div>;
+    return <div>{this.renderCart()}</div>;
   }
 }
