@@ -3,11 +3,13 @@ import Navi from "./Navi";
 import CategoryList from "./CategoryList";
 import ProductList from "./ProductList";
 import { Container, Row, Col } from "reactstrap";
+import alertify from "alertifyjs"
 
 export default class App extends Component {
   state = {
     categories: "",
     products: [],
+    cart: [],
   };
   componentDidMount() {
     this.getProducts();
@@ -27,15 +29,32 @@ export default class App extends Component {
       .then((data) => this.setState({ products: data }));
   };
 
+  addToCard = (product) => {
+    let newCart = this.state.cart;
+    var addedItem = newCart.find((c) => c.product.id === product.id);
+    if (addedItem) {
+      addedItem.quantity += 1;
+    } else {
+      newCart.push({ product: product, quantity: 1 });
+    }
+
+    this.setState({ cart: newCart });
+    alertify.success(product.productName + " added to cart!", 2)
+  };
+
+  removeFromCart = (product) => {
+    let newCart = this.state.cart.filter((c) => c.product.id !== product.id);
+    this.setState({ cart: newCart });
+    
+  };
   render() {
     let productInfo = { title: "Product Info" };
     let categoryInfo = { title: "Category Info" };
     return (
       <div className="App">
         <Container>
-          <Row>
-            <Navi />
-          </Row>
+          <Navi removeFromCart={this.removeFromCart} cart={this.state.cart} />
+
           <Row>
             <Col xs="3">
               <CategoryList
@@ -46,6 +65,7 @@ export default class App extends Component {
             </Col>
             <Col xs="9">
               <ProductList
+                addToCard={this.addToCard}
                 products={this.state.products}
                 prodcutCategory={this.prodcutCategory}
                 info={productInfo}
